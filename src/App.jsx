@@ -303,6 +303,7 @@ export default function App() {
   const [currentCard, setCurrentCard] = useState(null);
   const [cardFlipped, setCardFlipped] = useState(false);
   const [showInstr, setShowInstr] = useState(false);
+  const [showPromo, setShowPromo] = useState(false);
   const [emptyStage, setEmptyStage] = useState(null);
 
   const totalUsed = sessionCounts.early + sessionCounts.mid + sessionCounts.late;
@@ -344,16 +345,21 @@ export default function App() {
   }, [screen, currentCard]);
 
   const closeCard = useCallback(() => {
-    setCardFlipped(false);
-    setTimeout(() => {
-      if (currentCard) {
-        const k = currentCard.stageKey;
-        setUsed((p) => ({ ...p, [k]: [...p[k], currentCard.index] }));
-        setSessionCounts((p) => ({ ...p, [k]: p[k] + 1 }));
-      }
-      setScreen("main");
-    }, 680);
-  }, [currentCard]);
+  setCardFlipped(false);
+  setTimeout(() => {
+    if (currentCard) {
+      const k = currentCard.stageKey;
+      setUsed((p) => ({ ...p, [k]: [...p[k], currentCard.index] }));
+      setSessionCounts((p) => {
+        const updated = { ...p, [k]: p[k] + 1 };
+        const total = updated.early + updated.mid + updated.late;
+        if (total === 6) setShowPromo(true);
+        return updated;
+      });
+    }
+    setScreen("main");
+  }, 680);
+}, [currentCard]);
 
   const reset = useCallback(() => {
     setUsed({ early: [], mid: [], late: [] });
@@ -391,7 +397,7 @@ export default function App() {
         <CardScreen card={currentCard} flipped={cardFlipped} onClose={closeCard} />
       )}
 
-      {showInstr && (
+  {showInstr && (
         <div
           style={{
             position: "absolute",
@@ -404,6 +410,96 @@ export default function App() {
           }}
         >
           <Instructions onClose={() => setShowInstr(false)} />
+        </div>
+      )}
+ 
+      {showPromo && (
+        <div
+          style={{
+            position: "absolute",
+            top: 0, left: 0, right: 0,
+            minHeight: "100%",
+            background: "rgba(74,13,103,0.6)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 60,
+            padding: "0 24px",
+            boxSizing: "border-box",
+          }}
+        >
+          <div
+            className="anim-up"
+            style={{
+              background: CREAM,
+              borderRadius: 24,
+              padding: "32px 28px 28px",
+              width: "100%",
+              maxWidth: 380,
+              position: "relative",
+            }}
+          >
+            <button
+              className="btn-icon"
+              onClick={() => setShowPromo(false)}
+              style={{
+                position: "absolute",
+                top: 16, right: 16,
+                width: 32, height: 32,
+                borderRadius: "50%",
+                border: `1.5px solid ${PURPLE}30`,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CloseIcon color={PURPLE} />
+            </button>
+ 
+            <div
+              className="f-mono"
+              style={{ fontSize: 10, color: PURPLE_MID, letterSpacing: "0.12em", marginBottom: 14 }}
+            >
+              EN SUS PALABRAS
+            </div>
+ 
+            <div
+              className="f-syne"
+              style={{ fontSize: 22, fontWeight: 600, color: PURPLE, lineHeight: 1.2, marginBottom: 14 }}
+            >
+              ¿Te gustaría registrar esta conversación?
+            </div>
+ 
+            <div
+              className="f-dm"
+              style={{ fontSize: 15, color: PURPLE, fontWeight: 300, lineHeight: 1.6, opacity: 0.75, marginBottom: 28 }}
+            >
+              Graba esta sesión en un estudio profesional y dale el formato que se merece.
+            </div>
+ 
+            <a
+              href="https://juantwothree.cl/ensuspalabras"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="DM Sans"
+              style={{
+                display: "block",
+                width: "100%",
+                background: PURPLE,
+                color: "#fff",
+                fontSize: 12,
+                fontWeight: 700,
+                letterSpacing: "0.06em",
+                padding: "16px 0",
+                borderRadius: 12,
+                textAlign: "center",
+                textDecoration: "none",
+                boxSizing: "border-box",
+              }}
+            >
+              QUIERO SABER MÁS
+            </a>
+          </div>
         </div>
       )}
     </div>
@@ -521,6 +617,7 @@ function Main({ used, sessionCounts, totalUsed, onDraw, onInstr, onReset, emptyS
     <div
       style={{
         minHeight: "100vh",
+        overflow: "hidden",
         background: CREAM,
         display: "flex",
         flexDirection: "column",
