@@ -616,12 +616,11 @@ function Main({ used, sessionCounts, totalUsed, onDraw, onInstr, onReset, emptyS
   return (
     <div
       style={{
-        minHeight: "100vh",
-        overflow: "hidden",
+        minHeight: "100dvh",
         background: CREAM,
         display: "flex",
         flexDirection: "column",
-        padding: "0 0 24px",
+        padding: "0 0 16px",
         maxWidth: 480,
         margin: "0 auto",
         width: "100%",
@@ -633,7 +632,7 @@ function Main({ used, sessionCounts, totalUsed, onDraw, onInstr, onReset, emptyS
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
-          padding: "22px 24px 16px",
+          padding: "16px 24px 10px",
         }}
       >
         <div>
@@ -723,7 +722,7 @@ function StageButton({ stage, available, exhausted, delay, onClick }) {
         background: exhausted ? "#f0ebe8" : stage.btnBg,
         color: exhausted ? "#b0a8a3" : stage.btnFg,
         borderRadius: 14,
-        padding: "18px 20px",
+        padding: "14px 20px",
         width: "100%",
         opacity: exhausted ? 0.6 : 1,
         animationDelay: `${delay}s`,
@@ -807,7 +806,7 @@ function SessionFooter({ sessionCounts, totalUsed, onReset }) {
   return (
     <div
       style={{
-        marginTop: 12,
+        marginTop: 8,
         padding: "0 20px",
         borderTop: `1px solid ${PURPLE}20`,
         paddingTop: 20,
